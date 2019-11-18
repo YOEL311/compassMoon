@@ -10,14 +10,13 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "@react-native-community/async-storage": "^1.6.3",
+    "geomagnetism": "git+https://github.com/yelabbassi/geomagnetism.git",
     "react": "16.9.0",
     "react-native": "0.61.4",
     "react-native-geolocation-service": "^3.1.0",
-    "@react-native-community/async-storage": "^1.6.3",
-    "geomagnetism": "git+https://github.com/yelabbassi/geomagnetism.git",
     "react-native-sensors": "^5.3.2",
     "suncalc": "^1.8.0"
-
   },
   "devDependencies": {
     "@babel/core": "^7.6.2",

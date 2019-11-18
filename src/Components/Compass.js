@@ -3,8 +3,6 @@ import {
   View,
   Text,
   Animated,
-  Easing,
-  Image,
   Dimensions,
   ImageBackground,
   StyleSheet,
@@ -18,7 +16,6 @@ import {
 import ProgressBar from './progressBar';
 import {
   _angle,
-  requestLocationPermissionEndGetLocation,
 } from '../logic/logicCompass';
 
 const {height, width} = Dimensions.get('window');
@@ -38,12 +35,12 @@ export default class Compass extends Component {
     };
   }
 
-  static navigationOptions = {
-    title: 'Compass',
-    headerStyle: {
-      backgroundColor: '#f4511e',
-    },
-  };
+  // static navigationOptions = {
+  //   title: 'Compass',
+  //   headerStyle: {
+  //     backgroundColor: '#f4511e',
+  //   },
+  // };
 
   componentDidMount() {
     this._toggle();
@@ -70,11 +67,12 @@ export default class Compass extends Component {
     if (this._subscriptionAcc) {
       this._unsubscribeAcc();
     } else {
-      this._subscribeAcc();
+      // this._subscribeAcc();
     }
   };
 
   _subscribe = async () => {
+
     setUpdateIntervalForType(SensorTypes.magnetometer, 100);
     this._subscription = magnetometer.subscribe(
       sensorData => this.setState({magnetometer: _angle(sensorData)}),
@@ -83,6 +81,7 @@ export default class Compass extends Component {
   };
 
   _subscribeAcc = async () => {
+
     setUpdateIntervalForType(SensorTypes.accelerometer, 100);
     this._subscriptionAcc = accelerometer.subscribe(({x, y, z, timestamp}) => {
       console.log({x, y, z, timestamp});
@@ -110,7 +109,7 @@ export default class Compass extends Component {
           flex: 1,
           backgroundColor: 'black',
           alignItems: 'center',
-          direction: 'row',
+          // direction: 'row',
         }}>
         <Text style={{color: this.state.direction_up_down_color, fontSize: 90}}>
           {this.state.direction_up_down}
@@ -118,7 +117,7 @@ export default class Compass extends Component {
         {/*<Text style={{color: 'green', fontSize: 90}}> ✓</Text>*/}
         {/*<Text style={{color: 'green', fontSize: 90}}>✔</Text>*/}
         <Text style={{color: 'red', fontSize: 30}}>{this.state.altitude}</Text>
-        <View style={[styles.container, {direction: 'col'}]}>
+        <View style={[styles.container]}>
           <ImageBackground
             source={require('../../assets/aroow_vertical.png')}
             imageStyle={styles.imageStyle}
