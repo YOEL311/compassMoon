@@ -3,8 +3,6 @@ import {
   View,
   Text,
   Animated,
-  Easing,
-  Image,
   Dimensions,
   ImageBackground,
   StyleSheet,
@@ -18,7 +16,6 @@ import {
 import ProgressBar from './progressBar';
 import {
   _angle,
-  requestLocationPermissionEndGetLocation,
 } from '../logic/logicCompass';
 
 const {height, width} = Dimensions.get('window');
@@ -38,12 +35,12 @@ export default class Compass extends Component {
     };
   }
 
-  static navigationOptions = {
-    title: 'Compass',
-    headerStyle: {
-      backgroundColor: '#f4511e',
-    },
-  };
+  // static navigationOptions = {
+  //   title: 'Compass',
+  //   headerStyle: {
+  //     backgroundColor: '#f4511e',
+  //   },
+  // };
 
   componentDidMount() {
     this._toggle();
@@ -70,11 +67,12 @@ export default class Compass extends Component {
     if (this._subscriptionAcc) {
       this._unsubscribeAcc();
     } else {
-      this._subscribeAcc();
+      // this._subscribeAcc();
     }
   };
 
   _subscribe = async () => {
+
     setUpdateIntervalForType(SensorTypes.magnetometer, 100);
     this._subscription = magnetometer.subscribe(
       sensorData => this.setState({magnetometer: _angle(sensorData)}),
@@ -83,6 +81,7 @@ export default class Compass extends Component {
   };
 
   _subscribeAcc = async () => {
+
     setUpdateIntervalForType(SensorTypes.accelerometer, 100);
     this._subscriptionAcc = accelerometer.subscribe(({x, y, z, timestamp}) => {
       console.log({x, y, z, timestamp});
