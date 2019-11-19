@@ -110,7 +110,7 @@ export default class Compass extends Component {
           flex: 1,
           backgroundColor: 'black',
           alignItems: 'center',
-          direction: 'row',
+          // direction: 'row',
         }}>
         <Text style={{color: this.state.direction_up_down_color, fontSize: 90}}>
           {this.state.direction_up_down}
@@ -118,7 +118,7 @@ export default class Compass extends Component {
         {/*<Text style={{color: 'green', fontSize: 90}}> ✓</Text>*/}
         {/*<Text style={{color: 'green', fontSize: 90}}>✔</Text>*/}
         <Text style={{color: 'red', fontSize: 30}}>{this.state.altitude}</Text>
-        <View style={[styles.container, {direction: 'col'}]}>
+        <View style={[styles.container]}>
           <ImageBackground
             source={require('../../assets/aroow_vertical.png')}
             imageStyle={styles.imageStyle}
