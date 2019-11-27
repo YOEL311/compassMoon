@@ -128,7 +128,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.mooncompass"
+        applicationId "com.table.yoel.compass"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
