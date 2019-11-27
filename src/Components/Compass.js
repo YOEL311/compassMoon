@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {
   View,
   Text,
-  Animated,
+  Image,
   Dimensions,
   ImageBackground,
   StyleSheet,
@@ -14,26 +14,28 @@ import {
   setUpdateIntervalForType,
 } from 'react-native-sensors';
 import ProgressBar from './progressBar';
-import {
-  _angle,
-} from '../logic/logicCompass';
+import {_angle} from '../logic/logicCompass';
 
 const {height, width} = Dimensions.get('window');
 
 export default class Compass extends Component {
   constructor() {
     super();
-    // requestLocationPermissionEndGetLocation()
     this.state = {
       magnetometer: '0',
       altitude: 0,
-      moonAz: 20,
-      moonAl: 20,
+      delta: 0,
       direction_up_down: ' ',
-      // direction_up_down: '▼',
       direction_up_down_color: 'red',
+      scoreEnd: 0,
     };
+    this.magnetometer = 0;
+    this.altitude = 0;
+    this.moonAz = 20; //TODO
+    this.moonAl = 5; //TODO
   }
+
+  // ✓✔
 
   // static navigationOptions = {
   //   title: 'Compass',
@@ -44,12 +46,11 @@ export default class Compass extends Component {
 
   componentDidMount() {
     this._toggle();
-
     // this.moonAz = this.props.navigation.getParam('moon_az', 'NO-ID');
     // this.moonAl = this.props.navigation.getParam('moon_al', 'NO-ID');
 
-    console.log('param', this.moonAz);
-    console.log('param');
+    // this._unsubscribe();
+    // this._unsubscribeAcc();
   }
 
   componentWillUnmount() {
@@ -67,25 +68,27 @@ export default class Compass extends Component {
     if (this._subscriptionAcc) {
       this._unsubscribeAcc();
     } else {
-      // this._subscribeAcc();
+      this._subscribeAcc();
     }
   };
 
   _subscribe = async () => {
-
     setUpdateIntervalForType(SensorTypes.magnetometer, 100);
     this._subscription = magnetometer.subscribe(
-      sensorData => this.setState({magnetometer: _angle(sensorData)}),
+      sensorData => {
+        this.magnetometer = _angle(sensorData);
+        this.setState({magnetometer: this.magnetometer});
+        this.calculation();
+      },
       error => console.log('The sensor is not available'),
     );
   };
 
   _subscribeAcc = async () => {
-
     setUpdateIntervalForType(SensorTypes.accelerometer, 100);
     this._subscriptionAcc = accelerometer.subscribe(({x, y, z, timestamp}) => {
-      console.log({x, y, z, timestamp});
-      this.setState({altitude: y.toFixed(4)});
+      this.altitude = y.toFixed(4);
+      this.calculation();
     });
   };
 
@@ -99,30 +102,67 @@ export default class Compass extends Component {
     this._subscriptionAcc = null;
   };
 
-  calculet() {}
+  calculation = () => {
+    let deltaAl = Math.abs(this.moonAl - this.altitude);
+    this.setArrowUpDown(deltaAl);
+    //delta azimuth
+    let deltaAz = Math.abs(this.moonAz - this.magnetometer);
+    deltaAz = deltaAz < 180 ? deltaAz : 360 - deltaAz;
+    //calculate score end
+    let scoreEnd = 100 - (deltaAz / 3.6 + deltaAl * 5);
+    // console.log('score end', scoreEnd);
+    // console.log('delta al', deltaAl);
+    // console.log('delta az', deltaAz);
+    // console.log(scoreEnd);
+    this.setState({scoreEnd});
+    if (scoreEnd > 95) {
+      // console.log('===');
+      this.setState({
+        direction_up_down: '✔',
+        direction_up_down_color: 'green',
+      });
+    }
+  };
+
+  setArrowUpDown(deltaAz) {
+    if (this.moonAl < this.altitude) {
+      // console.log('<');
+
+      this.setState({
+        direction_up_down: '▼',
+        direction_up_down_color: 'red',
+      });
+    } else if (this.moonAl > this.altitude) {
+      this.setState({
+        direction_up_down: '▲',
+        direction_up_down_color: 'red',
+      });
+    }
+    // this.setState({
+    //   altitude: this.altitude,
+    //   delta: deltaAz,
+    // });
+  }
 
   render() {
-    console.log(this.state.altitude);
     return (
       <View
         style={{
           flex: 1,
           backgroundColor: 'black',
           alignItems: 'center',
-          // direction: 'row',
         }}>
         <Text style={{color: this.state.direction_up_down_color, fontSize: 90}}>
           {this.state.direction_up_down}
         </Text>
-        {/*<Text style={{color: 'green', fontSize: 90}}> ✓</Text>*/}
-        {/*<Text style={{color: 'green', fontSize: 90}}>✔</Text>*/}
-        <Text style={{color: 'red', fontSize: 30}}>{this.state.altitude}</Text>
+        {/*<Text style={{color: 'green', fontSize: 30}}>{this.state.scoreEnd}</Text>*/}
+        {/*<Text style={{color: 'red', fontSize: 30}}>{this.state.altitude}</Text>*/}
         <View style={[styles.container]}>
           <ImageBackground
             source={require('../../assets/aroow_vertical.png')}
             imageStyle={styles.imageStyle}
             style={[styles.imageBackground]}>
-            <Animated.Image
+            <Image
               source={require('../../assets/arrow.png')}
               style={[
                 styles.image,
@@ -130,10 +170,7 @@ export default class Compass extends Component {
                   transform: [
                     {
                       rotate:
-                        360 -
-                        this.state.magnetometer +
-                        this.state.moonAz +
-                        'deg',
+                        360 - this.state.magnetometer + this.moonAz + 'deg',
                     },
                   ],
                 },
@@ -142,7 +179,7 @@ export default class Compass extends Component {
           </ImageBackground>
           <ProgressBar
             style={{alignSelf: 'center'}}
-            pr={this.state.altitude * 10}
+            pr={this.state.scoreEnd + 2}
           />
         </View>
       </View>
@@ -164,11 +201,9 @@ const styles = StyleSheet.create({
   imageBackground: {
     flex: 4,
     borderRadius: 360,
-    // backgroundColor: 'black',
     overflow: 'visible',
     height: '100%',
     width: '100%',
-    // alignItems: "center",
     resizeMode: 'contain',
     justifyContent: 'center',
   },

@@ -45,6 +45,8 @@ export async function requestLocationPermissionEndGetLocation() {
           // console.log('declination:', info.decl);
           this.setState({devi: info.decl});
           storeData(latitude, longitude, info.decl);
+          console.log('return');
+
           return;
         },
         error => {
