@@ -23,14 +23,15 @@ export default class Compass extends Component {
     super();
     this.state = {
       magnetometer: '0',
-      altitude: 0,
-      delta: 0,
+      // altitude: 0,
+      // delta: 0,
       direction_up_down: ' ',
       direction_up_down_color: 'red',
       scoreEnd: 0,
     };
     this.magnetometer = 0;
     this.altitude = 0;
+    this.magnetoDecl = 7; //TODO
     this.moonAz = 20; //TODO
     this.moonAl = 5; //TODO
   }
@@ -170,7 +171,11 @@ export default class Compass extends Component {
                   transform: [
                     {
                       rotate:
-                        360 - this.state.magnetometer + this.moonAz + 'deg',
+                        360 -
+                        this.state.magnetometer +
+                        this.magnetoDecl +
+                        this.moonAz +
+                        'deg',
                     },
                   ],
                 },

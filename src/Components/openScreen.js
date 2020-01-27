@@ -84,7 +84,8 @@ export default class openScreen extends Component {
           title="Go to Compass"
           onPress={() =>
             this.props.navigation.navigate('Compass', {
-              // moon: this.state.,
+              // moonAl: this.state.,
+              // moonAz: this.state.,
               devi: 34,
             })
           }
