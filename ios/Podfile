@@ -7,6 +7,9 @@ target 'moonCompass' do
  # Pods for moonCompass
 pod 'RNSensors', :path => '../node_modules/react-native-sensors'
 pod 'react-native-geolocation', path: '../node_modules/@react-native-community/geolocation'
+
+
+
   pod 'FBLazyVector', :path => "../node_modules/react-native/Libraries/FBLazyVector"
   pod 'FBReactNativeSpec', :path => "../node_modules/react-native/Libraries/FBReactNativeSpec"
   pod 'RCTRequired', :path => "../node_modules/react-native/Libraries/RCTRequired"
